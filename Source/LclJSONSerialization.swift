@@ -42,6 +42,12 @@ public class LclJSONSerialization {
                 let invalid = number.isInfinite || number.isNaN
                 return !invalid
             }
+            
+            // object is a Float and is not NaN or infinity
+            if let number = obj as? Float  {
+                let invalid = number.isInfinite || number.isNaN
+                return !invalid
+            }
 
             // object is NSNumber and is not NaN or infinity
             if let number = obj as? NSNumber {
