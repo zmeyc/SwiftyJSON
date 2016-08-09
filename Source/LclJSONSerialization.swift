@@ -152,7 +152,7 @@ public class LclJSONSerialization {
                 try writeJsonObject(mirror.children.map { $0.value }, padding: padding, writer: writer)
             }
             else {
-                print("writeJsonValue: Unsupported type \(obj.dynamicType)")
+                print("writeJsonValue: Unsupported type \(type(of: obj))")
                 throw createWriteError("Unsupported data type to be written out as JSON")
             }
         }
