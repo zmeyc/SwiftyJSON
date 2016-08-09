@@ -142,7 +142,7 @@ public struct JSON {
 
 #if os(Linux)
     /// Private object
-    private var rawBool: Bool = false
+    var rawBool: Bool = false
 
     /// Object in JSON
     public var object: Any {
@@ -630,7 +630,7 @@ extension JSON {
             } else {
                 var r = JSON.null
 #if os(Linux)
-                r._error = NSError(domain: ErrorDomain, code:ErrorIndexOutOfBounds, userInfo: [NSLocalizedDescriptionKey: "Array[\(index)] is out of bounds" as AnyType])
+                r._error = NSError(domain: ErrorDomain, code:ErrorIndexOutOfBounds, userInfo: [NSLocalizedDescriptionKey: "Array[\(index)] is out of bounds" as Any])
 #else
                 r._error = NSError(domain: ErrorDomain, code:ErrorIndexOutOfBounds, userInfo: [NSLocalizedDescriptionKey as AnyObject as! NSObject: "Array[\(index)] is out of bounds" as AnyObject])
 #endif
