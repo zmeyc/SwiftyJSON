@@ -79,8 +79,7 @@ class PerformanceTests: XCTestCase {
         let json = JSON(data:self.testData)
         self.measure() {
             for _ in 1...100 {
-                let object: JSON.AnyType? = json.object
-                XCTAssertTrue(object != nil)
+                _ = json.object
             }
         }
     }
