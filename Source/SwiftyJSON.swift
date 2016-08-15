@@ -135,14 +135,12 @@ public struct JSON {
     var rawNull: NSNull = NSNull()
     var rawArray: [Any] = []
     var rawDictionary: [String : Any] = [:]
+    var rawBool: Bool = false
     /// Private type
     var _type: Type = .null
     /// prviate error
     var _error: NSError? = nil
 
-#if os(Linux)
-    /// Private object
-    var rawBool: Bool = false
 
     /// Object in JSON
     public var object: Any {
@@ -162,8 +160,11 @@ public struct JSON {
                 return self.rawNull
             }
         }
+    
         set {
             _error = nil
+            
+#if os(Linux)
             let (type, value) = self.setObjectHelper(newValue)
 
             _type = type
@@ -190,9 +191,43 @@ public struct JSON {
                     _error = NSError(domain: ErrorDomain, code: ErrorUnsupportedType, userInfo: [NSLocalizedDescriptionKey: "It is a unsupported type"])
                     print("==> error=\(_error). type=\(type(of: newValue))")
             }
+#else
+            if  type(of: newValue) == Bool.self {
+                _type = .bool
+                self.rawBool = newValue as! Bool
+            }
+            else {
+                switch newValue {
+                case let number as NSNumber:
+                    if number.isBool {
+                        _type = .bool
+                        self.rawBool = number.boolValue
+                    } else {
+                        _type = .number
+                        self.rawNumber = number
+                    }
+                case  let string as String:
+                    _type = .string
+                    self.rawString = string
+                case  _ as NSNull:
+                    _type = .null
+                case let array as [AnyObject]:
+                    _type = .array
+                    self.rawArray = array
+                case let dictionary as [String : AnyObject]:
+                    _type = .dictionary
+                    self.rawDictionary = dictionary
+                default:
+                    _type = .unknown
+                    _error = NSError(domain: ErrorDomain, code: ErrorUnsupportedType, userInfo: [NSLocalizedDescriptionKey as NSObject: "It is a unsupported type"])
+                }
+            }
+    
+#endif
         }
     }
 
+#if os(Linux)
     private func setObjectHelper(_ newValue: Any) -> (Type, Any) {
       var type: Type
       var value: Any
@@ -280,53 +315,6 @@ public struct JSON {
           }
        }
        return result
-    }
-#else
-
-    /// Object in JSON
-    public var object: Any {
-        get {
-            switch self.type {
-            case .array:
-                return self.rawArray as Any
-            case .dictionary:
-                return self.rawDictionary as Any
-            case .string:
-                return self.rawString as Any
-            case .number:
-                return self.rawNumber
-            case .bool:
-                return self.rawNumber
-            default:
-                return self.rawNull
-            }
-        }
-        set {
-            _error = nil
-            switch newValue {
-            case let number as NSNumber:
-                if number.isBool {
-                    _type = .bool
-                } else {
-                    _type = .number
-                }
-                self.rawNumber = number
-            case  let string as String:
-                _type = .string
-                self.rawString = string
-            case  _ as NSNull:
-                _type = .null
-            case let array as [AnyObject]:
-                _type = .array
-                self.rawArray = array
-            case let dictionary as [String : AnyObject]:
-                _type = .dictionary
-                self.rawDictionary = dictionary
-            default:
-                _type = .unknown
-                _error = NSError(domain: ErrorDomain, code: ErrorUnsupportedType, userInfo: [NSLocalizedDescriptionKey as NSObject: "It is a unsupported type"])
-            }
-        }
     }
 
 #endif
@@ -877,7 +865,7 @@ extension JSON: Swift.RawRepresentable {
         case .number:
             return self.rawNumber.stringValue
         case .bool:
-            return self.rawNumber.boolValue.description
+            return self.rawBool.description
         case .null:
             return "null"
         default:
@@ -998,28 +986,20 @@ extension JSON {
         get {
             switch self.type {
             case .bool:
-                #if os(Linux)
-                    return self.rawBool
-                #else
-                    return self.rawNumber.boolValue
-                #endif
+                return self.rawBool
             default:
                 return nil
             }
         }
         set {
             if let newValue = newValue {
-                #if os(Linux)
-                    self.object = newValue as Bool
-                #else
-                    self.object = NSNumber(value: newValue)
-                #endif
+                self.object = newValue as Bool
             } else {
                 self.object = NSNull()
             }
         }
     }
-#if os(Linux)
+
     //Non-optional bool
     public var boolValue: Bool {
         get {
@@ -1029,7 +1009,7 @@ extension JSON {
             case .number:
                 return self.rawNumber.boolValue
             case .string:
-                return self.rawString.bridge().caseInsensitiveCompare("true") == .orderedSame
+                return self.rawString.caseInsensitiveCompare("true") == .orderedSame
             default:
                 return false
             }
@@ -1038,23 +1018,6 @@ extension JSON {
             self.object = newValue
         }
     }
-#else
-    public var boolValue: Bool {
-        get {
-            switch self.type {
-            case .string:
-                return self.rawString.caseInsensitiveCompare("true") == .orderedSame
-            case .bool, .number:
-                return self.rawNumber.boolValue
-            default:
-                return false
-            }
-        }
-        set {
-            self.object = NSNumber(value: newValue)
-        }
-    }
-#endif
 }
 
 // MARK: - String
@@ -1121,8 +1084,10 @@ extension JSON {
     public var number: NSNumber? {
         get {
             switch self.type {
-            case .number, .bool:
+            case .number:
                 return self.rawNumber
+            case .bool:
+            return NSNumber(value: self.rawBool ? 1 : 0)
             default:
                 return nil
             }
@@ -1154,14 +1119,7 @@ extension JSON {
             case .number:
                 return self.object as? NSNumber ?? NSNumber(value: 0)
             case .bool:
-                #if os(Linux)
-                    if let value = self.object as? Bool {
-                        return value ? NSNumber(value: 1) : NSNumber(value: 0)
-                    }
-                    return NSNumber(value: 0)
-                #else
-                    return self.object as? NSNumber ?? NSNumber(value: 0)
-                #endif
+                return NSNumber(value: self.rawBool ? 1 : 0)
             default:
                 return NSNumber(value: 0.0)
             }
@@ -1510,7 +1468,7 @@ public func ==(lhs: JSON, rhs: JSON) -> Bool {
     case (.string, .string):
         return lhs.rawString == rhs.rawString
     case (.bool, .bool):
-        return lhs.rawNumber.boolValue == rhs.rawNumber.boolValue
+        return lhs.rawBool == rhs.rawBool
     case (.array, .array):
 #if os(Linux)
         return lhs.rawArray.bridge() == rhs.rawArray.bridge()    
@@ -1538,7 +1496,7 @@ public func <=(lhs: JSON, rhs: JSON) -> Bool {
     case (.string, .string):
         return lhs.rawString <= rhs.rawString
     case (.bool, .bool):
-        return lhs.rawNumber.boolValue == rhs.rawNumber.boolValue
+        return lhs.rawBool == rhs.rawBool
     case (.array, .array):
 #if os(Linux)
         return lhs.rawArray.bridge() == rhs.rawArray.bridge()    
@@ -1566,7 +1524,7 @@ public func >=(lhs: JSON, rhs: JSON) -> Bool {
     case (.string, .string):
         return lhs.rawString >= rhs.rawString
     case (.bool, .bool):
-        return lhs.rawNumber.boolValue == rhs.rawNumber.boolValue
+        return lhs.rawBool == rhs.rawBool
     case (.array, .array):
 #if os(Linux)
         return lhs.rawArray.bridge() == rhs.rawArray.bridge()    
