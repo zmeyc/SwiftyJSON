@@ -211,7 +211,7 @@ public struct JSON {
                     self.rawString = string
                 case  _ as NSNull:
                     _type = .null
-                case let array as [AnyObject]:
+                case let array as [Any]:
                     _type = .array
                     self.rawArray = array
                 case let dictionary as [String : Any]:
