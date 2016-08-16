@@ -214,7 +214,7 @@ public struct JSON {
                 case let array as [AnyObject]:
                     _type = .array
                     self.rawArray = array
-                case let dictionary as [String : AnyObject]:
+                case let dictionary as [String : Any]:
                     _type = .dictionary
                     self.rawDictionary = dictionary
                 default:
