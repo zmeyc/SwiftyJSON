@@ -72,9 +72,7 @@ class RawRepresentableTests: XCTestCase {
         XCTAssertEqual(objectTrue as? Bool, true)
 
         #if !os(Linux)
-        // Bool to NSNumber, Int, Double conversion doesn't work on Linux
-        XCTAssertEqual(objectTrue as? Int, 1)
-        XCTAssertEqual(objectTrue as? Double, 1.0)
+        // Bool to NSNumber conversion doesn't work on Linux
         XCTAssertEqual(objectTrue as? NSNumber, NSNumber(value: true))
         #endif
 
@@ -82,9 +80,7 @@ class RawRepresentableTests: XCTestCase {
         XCTAssertEqual(objectFalse as? Bool, false)
         
         #if !os(Linux)
-        // Bool to NSNumber, Int, Double conversion doesn't work on Linux
-        XCTAssertEqual(objectFalse as? Int, 0)
-        XCTAssertEqual(objectFalse as? Double, 0.0)
+        // Bool to NSNumber conversion doesn't work on Linux
         XCTAssertEqual(objectFalse as? NSNumber, NSNumber(value: false))
         #endif
     }
