@@ -47,7 +47,7 @@ class SequenceTypeTests: XCTestCase {
 // END OF GENERATED CODE
     func testJSONFile() {
         do {
-            let testData = try Data(contentsOf: URL(fileURLWithPath: "Tests/SwiftyJSON/Tests.json"))
+            let testData = try Data(contentsOf: URL(fileURLWithPath: "Tests/SwiftyJSONTests/Tests.json"))
             let json = JSON(data:testData)
             var ind = 0
             for (_, sub) in json {

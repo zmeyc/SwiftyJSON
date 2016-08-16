@@ -53,7 +53,7 @@ class PerformanceTests: XCTestCase {
         super.setUp()
 
         do {
-            self.testData = try Data(contentsOf: URL(fileURLWithPath: "Tests/SwiftyJSON/Tests.json"))
+            self.testData = try Data(contentsOf: URL(fileURLWithPath: "Tests/SwiftyJSONTests/Tests.json"))
         }
         catch {
             XCTFail("Failed to read in the test data")
