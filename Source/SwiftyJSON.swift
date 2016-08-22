@@ -266,8 +266,8 @@ public struct JSON {
           type = .dictionary
           var dict = [String: Any]()
           dictionary.enumerateKeysAndObjects(using: {(key: Any, val: Any, stop: UnsafeMutablePointer<ObjCBool>) in
-                let keyStr = key as! NSString
-                dict[keyStr._bridgeToSwift()] = val
+                let keyStr = key as! String
+                dict[keyStr] = val
           })
           value = dict
       default:
