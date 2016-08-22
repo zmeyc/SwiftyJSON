@@ -1162,16 +1162,9 @@ extension JSON {
         get {
             switch self.type {
             case .string:
-                #if os(Linux)
-                    guard let encodedString_ = self.rawString.bridge().stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.urlQueryAllowed) else {
-                        return nil
-                    }
-                #else
-                    guard let encodedString_ = self.rawString.addingPercentEncoding(withAllowedCharacters: CharacterSet.urlQueryAllowed) else {
-                        return nil
-                    }
-                #endif
-
+                guard let encodedString_ = self.rawString.addingPercentEncoding(withAllowedCharacters: CharacterSet.urlQueryAllowed) else {
+                    return nil
+                }
                 return NSURL(string: encodedString_)
 
             default:
