@@ -255,19 +255,19 @@ public struct JSON {
           value = string
       case  let string as NSString:
           type = .string
-          value = string.bridge()
+          value = string._bridgeToSwift()
       case  _ as NSNull:
           type = .null
           value = ""
       case let array as NSArray:
           type = .array
-          value = array.bridge().map { $0 as Any }
+          value = array._bridgeToSwift().map { $0 as Any }
       case let dictionary as NSDictionary:
           type = .dictionary
           var dict = [String: Any]()
           dictionary.enumerateKeysAndObjects(using: {(key: AnyObject, val: AnyObject, stop: UnsafeMutablePointer<ObjCBool>) in
                 let keyStr = key as! NSString
-                dict[keyStr.bridge()] = val
+                dict[keyStr._bridgeToSwift()] = val
           })
           value = dict
       default:
@@ -1471,14 +1471,14 @@ public func ==(lhs: JSON, rhs: JSON) -> Bool {
         return lhs.rawBool == rhs.rawBool
     case (.array, .array):
 #if os(Linux)
-        return lhs.rawArray.bridge() == rhs.rawArray.bridge()    
-#else 
+        return lhs.rawArray._bridgeToObjectiveC() == rhs.rawArray._bridgeToObjectiveC()
+#else
         return lhs.rawArray as NSArray == rhs.rawArray as NSArray
 #endif
     case (.dictionary, .dictionary):
 #if os(Linux)
-        return lhs.rawDictionary.bridge() == rhs.rawDictionary.bridge()
-#else 
+        return lhs.rawDictionary._bridgeToObjectiveC() == rhs.rawDictionary._bridgeToObjectiveC()
+#else
         return lhs.rawDictionary as NSDictionary == rhs.rawDictionary as NSDictionary
 #endif
     case (.null, .null):
@@ -1499,14 +1499,14 @@ public func <=(lhs: JSON, rhs: JSON) -> Bool {
         return lhs.rawBool == rhs.rawBool
     case (.array, .array):
 #if os(Linux)
-        return lhs.rawArray.bridge() == rhs.rawArray.bridge()    
-#else 
+        return lhs.rawArray._bridgeToObjectiveC() == rhs.rawArray._bridgeToObjectiveC()
+#else
         return lhs.rawArray as NSArray == rhs.rawArray as NSArray
 #endif
     case (.dictionary, .dictionary):
 #if os(Linux)
-        return lhs.rawDictionary.bridge() == rhs.rawDictionary.bridge()
-#else 
+        return lhs.rawDictionary._bridgeToObjectiveC() == rhs.rawDictionary._bridgeToObjectiveC()
+#else
         return lhs.rawDictionary as NSDictionary == rhs.rawDictionary as NSDictionary
 #endif
     case (.null, .null):
@@ -1527,14 +1527,14 @@ public func >=(lhs: JSON, rhs: JSON) -> Bool {
         return lhs.rawBool == rhs.rawBool
     case (.array, .array):
 #if os(Linux)
-        return lhs.rawArray.bridge() == rhs.rawArray.bridge()    
-#else 
+        return lhs.rawArray._bridgeToObjectiveC() == rhs.rawArray._bridgeToObjectiveC()
+#else
         return lhs.rawArray as NSArray == rhs.rawArray as NSArray
 #endif
     case (.dictionary, .dictionary):
 #if os(Linux)
-        return lhs.rawDictionary.bridge() == rhs.rawDictionary.bridge()
-#else 
+        return lhs.rawDictionary._bridgeToObjectiveC() == rhs.rawDictionary._bridgeToObjectiveC()
+#else
         return lhs.rawDictionary as NSDictionary == rhs.rawDictionary as NSDictionary
 #endif
     case (.null, .null):
