@@ -265,7 +265,7 @@ public struct JSON {
       case let dictionary as NSDictionary:
           type = .dictionary
           var dict = [String: Any]()
-          dictionary.enumerateKeysAndObjects(using: {(key: AnyObject, val: AnyObject, stop: UnsafeMutablePointer<ObjCBool>) in
+          dictionary.enumerateKeysAndObjects(using: {(key: Any, val: Any, stop: UnsafeMutablePointer<ObjCBool>) in
                 let keyStr = key as! NSString
                 dict[keyStr._bridgeToSwift()] = val
           })
