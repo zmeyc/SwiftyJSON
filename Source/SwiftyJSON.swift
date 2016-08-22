@@ -344,8 +344,8 @@ public struct JSON {
 #endif
 }
 
-// MARK: - CollectionType, SequenceType, Indexable
-extension JSON : Collection, Sequence, Indexable {
+// MARK: - CollectionType, SequenceType
+extension JSON : Collection, Sequence {
 
     public typealias Generator = JSONGenerator
 
