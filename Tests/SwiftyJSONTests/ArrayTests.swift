@@ -1,4 +1,4 @@
-//  StringTests.swift
+//  ArrayTests.swift
 //
 //  Copyright (c) 2014 Pinglin Tang
 //
@@ -21,31 +21,36 @@
 //  THE SOFTWARE.
 
 import XCTest
-import SwiftyJSON
+@testable import SwiftyJSON
 
-class StringTests: XCTestCase {
+class ArrayTests: XCTestCase {
 
-    func testString() {
-        //getter
-        var json = JSON("abcdefg hijklmn;opqrst.?+_()")
-        XCTAssertEqual(json.string!, "abcdefg hijklmn;opqrst.?+_()")
-        XCTAssertEqual(json.stringValue, "abcdefg hijklmn;opqrst.?+_()")
-
-        json.string = "12345?67890.@#"
-        XCTAssertEqual(json.string!, "12345?67890.@#")
-        XCTAssertEqual(json.stringValue, "12345?67890.@#")
+// GENERATED: allTests required for Swift 3.0
+    static var allTests : [(String, (ArrayTests) -> () throws -> Void)] {
+        return [
+            ("testSingleDimensionalArraysGetter", testSingleDimensionalArraysGetter),
+            ("testSingleDimensionalArraysSetter", testSingleDimensionalArraysSetter),
+        ]
     }
-    
-    func testURL() {
-        let json = JSON("http://github.com")
-        XCTAssertEqual(json.URL!, NSURL(string:"http://github.com")!)
+// END OF GENERATED CODE
+
+    func testSingleDimensionalArraysGetter() {
+        let array = ["1","2", "a", "B", "D"]
+        let json = JSON(array as Any)
+
+        XCTAssertEqual((json.array![0] as JSON).string!, "1")
+        XCTAssertEqual((json.array![1] as JSON).string!, "2")
+        XCTAssertEqual((json.array![2] as JSON).string!, "a")
+        XCTAssertEqual((json.array![3] as JSON).string!, "B")
+        XCTAssertEqual((json.array![4] as JSON).string!, "D")
     }
 
-    func testURLPercentEscapes() {
-        let emDash = "\\u2014"
-        let urlString = "http://examble.com/unencoded" + emDash + "string"
-        let encodedURLString = urlString.addingPercentEncoding(withAllowedCharacters: NSCharacterSet.urlQueryAllowed())
-        let json = JSON(urlString as AnyObject)
-        XCTAssertEqual(json.URL!, NSURL(string: encodedURLString!)!, "Wrong unpacked ")
+    func testSingleDimensionalArraysSetter() {
+        let array = ["1","2", "a", "B", "D"]
+        var json = JSON(array as Any)
+
+        json.arrayObject = ["111", "222"]
+        XCTAssertEqual((json.array![0] as JSON).string!, "111")
+        XCTAssertEqual((json.array![1] as JSON).string!, "222")
     }
 }
